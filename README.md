@@ -72,8 +72,6 @@ The floor material is detected **automatically** from the lowest block layer of 
 - `/baa game [arena_id] speed_builders plot build_area set [plot_id]` — Save or redefine the build area for that exact plot.
 - `/baa game [arena_id] speed_builders plot build_area remove [plot_id]` — Remove the build area assigned to that plot.
 
-Legacy aliases still work, but the plot-scoped command above is the recommended setup path.
-
 **Example workflow:**
 1. `/baa stick` — Get the selection tool.
 2. Select corner 1 and corner 2 of the first plot/island.
@@ -90,7 +88,6 @@ The showcase is the central reference build shown after build time ends, during 
 - `/baa game [arena_id] speed_builders showcase remove` — Remove the showcase reference plot.
 
 #### 4. Add structures
-Drop custom `.json` structure files into `plugins/BlueArcade/modules/SpeedBuilders-Module/structures/` or create them directly in-game:
 - `/baa game [arena_id] speed_builders structure create <id>` — Save the current stick selection as a structure.
 - `/baa game [arena_id] speed_builders structure remove <id>` — Delete a structure.
 - `/baa game [arena_id] speed_builders structure list` — List all loaded structures.
