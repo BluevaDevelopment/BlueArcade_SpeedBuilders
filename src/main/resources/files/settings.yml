@@ -1,0 +1,46 @@
+# Speed Builders Module Settings
+
+file_version: 1
+
+# Visual representation in core vote menu
+menus:
+  vote:
+    item: BRICKS
+
+# Game timing (seconds)
+time:
+  showcase: 10
+  between_rounds: 3
+  elimination_delay: 4
+
+# Gameplay behavior
+gameplay:
+  # Extra horizontal blocks players may move outside their assigned plot before the border stops them.
+  plot_border_margin: 6
+
+# Guardian showcase behavior
+guardian:
+  # How many blocks above the showcase top the guardian hovers.
+  height_above_showcase: 5
+  # Orbit radius while players are building.
+  orbit_radius: 4
+  # Rotation speed while orbiting, in degrees per tick.
+  orbit_degrees_per_tick: 3
+  # How long the elimination beam remains visible, in ticks.
+  beam_ticks: 50
+  # Maximum fake falling block shards spawned when an eliminated player's plot explodes.
+  explosion_max_shards: 220
+  # Horizontal shard velocity multiplier, stored as tenths (8 = 0.8).
+  explosion_horizontal_power: 8
+  # Upward shard velocity multiplier, stored as tenths (7 = 0.7).
+  explosion_upward_power: 7
+  # How long fake shards remain before being removed, in ticks.
+  explosion_shard_lifetime_ticks: 50
+
+# Build evaluation
+evaluation:
+  # Tolerance for connection-sensitive blocks (fences, glass panes, etc.)
+  connection_sensitive_only_material: true
+  # Blocks that always match regardless of state
+  always_match:
+    - END_PORTAL_FRAME

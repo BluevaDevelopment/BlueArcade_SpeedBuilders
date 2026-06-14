@@ -1,0 +1,12 @@
+name: Speed Builders
+id: speed_builders
+version: ${revision}
+type: MINIGAME
+api-version: 3.3
+main: net.blueva.arcade.modules.speed_builders.SpeedBuildersModule
+
+authors:
+  - Blueva
+  - Whiron
+
+description: "Memorize the build, replicate it as fast as possible, and survive each round."
