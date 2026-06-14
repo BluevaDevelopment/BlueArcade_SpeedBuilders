@@ -1,7 +1,7 @@
 # BlueArcade - Speed Builders
 
 This resource is a **BlueArcade 3 module** and requires the core plugin to run.
-Get BlueArcade 3 here: https://store.blueva.net/resources/resource/1-blue-arcade/
+Get BlueArcade 3 here: [https://blueva.net/store/blue-arcade](https://blueva.net/store/blue-arcade)
 
 ## Description
 Memorize the build, replicate it as fast as possible, and survive each round. The player with the lowest accuracy is eliminated until one champion remains.
@@ -19,14 +19,15 @@ This is a **Minigame**: it is designed for standalone arenas, but it can also be
 - Arena management tools and setup commands.
 
 ## Features
-- JSON structure system with unlimited build structures.
-- Shuffled structure rotation with no repeats until the deck is exhausted.
-- Separate plot bounds and build area setup (inspired by Shuffle).
-- Automatic block rotation based on each plot's spawn yaw.
-- Smart build evaluation with support for fluids, wall signs, connection-sensitive blocks, and multi-block plants.
-- Perfect build detection with instant broadcast and early round ending when all players are perfect.
-- Round-based elimination: lowest score is eliminated each round.
-- Template entity support (mobs) with spawning and cleanup.
+- **350+ ready-to-play structures** included, from everyday objects to fantasy scenes, so every match feels fresh.
+- **Memory-and-speed gameplay** that rewards spatial awareness, fast building, and staying cool under pressure.
+- **Shuffled structure rotation** with no repeats until the deck is exhausted.
+- **Precision judging** that handles complex blocks, fluids, signs, and mobs fairly.
+- **Perfect build moments** with instant broadcasts and early round endings when everyone nails it.
+- **Round-based elimination** where the lowest score is eliminated each round, building tension until one champion remains.
+- **Cinematic Elder Guardian spectacle** that watches the showcase and eliminates players with a laser beam and dramatic plot explosion.
+- **Custom structures** to expand the game with your own builds.
+- **Full BlueArcade 3 integration** with stats, leaderboards, achievements, XP, parties, and store-ready menus.
 
 ## Arena setup
 ### Common steps
@@ -89,31 +90,10 @@ The showcase is the central reference build shown after build time ends, during 
 - `/baa game [arena_id] speed_builders showcase remove` — Remove the showcase reference plot.
 
 #### 4. Add structures
-Place `.json` structure files in `plugins/BlueArcade/modules/SpeedBuilders-Module/structures/`. The module loads all `.json` files from this folder on startup.
-
-You can also create structures directly in-game:
-- `/baa game [arena_id] speed_builders structure create <id>` — Save the current stick selection as a structure JSON.
-- `/baa game [arena_id] speed_builders structure remove <id>` — Delete a structure file.
+Drop custom `.json` structure files into `plugins/BlueArcade/modules/SpeedBuilders-Module/structures/` or create them directly in-game:
+- `/baa game [arena_id] speed_builders structure create <id>` — Save the current stick selection as a structure.
+- `/baa game [arena_id] speed_builders structure remove <id>` — Delete a structure.
 - `/baa game [arena_id] speed_builders structure list` — List all loaded structures.
-
-Structure format:
-```json
-{
-  "name": "My Build",
-  "origin": { "x": 0, "y": 0, "z": 0 },
-  "blocks": [
-    { "x": 0, "y": 1, "z": 0, "type": "minecraft:oak_planks" }
-  ],
-  "entities": [
-    { "type": "PIG", "x": 0, "y": 1, "z": 0 }
-  ]
-}
-```
-
-- `center` is the anchor point of the structure.
-- Block coordinates are relative to `origin`.
-- Use full block state strings (e.g., `minecraft:oak_stairs[facing=north]`).
-- Blocks at `y = 0` are treated as floor and are not evaluated.
 
 ## Technical details
 - **Minigame ID:** `speed_builders`
