@@ -1,10 +1,17 @@
-file_version: 1
+#  ____  _               _                      _
+# | __ )| |_   _  ___   / \   _ __ ___ __ _  __| | ___
+# |  _ \| | | | |/ _ \ / _ \ | '__/ __/ _` |/ _` |/ _ \
+# | |_) | | |_| |  __// ___ \| | | (_| (_| | (_| |  __/
+# |____/|_|\__,_|\___/_/   \_|_|  \___\__,_|\__,_|\___|
+#
+# [!] Arcade by Blueva | https://blueva.net/store/blue-arcade [!]
+
 category:
-  id: speed_builders
+  id: "speed_builders"
   name: "Speed Builders"
   description:
     - "Achievements tied to Speed Builders."
-  icon: BRICKS
+  icon: "BRICKS"
   sort_order: 31
 
 achievements:
@@ -12,7 +19,7 @@ achievements:
     name: "Fast Learner"
     description:
       - "Play Speed Builders matches."
-    icon: BRICKS
+    icon: "BRICKS"
     phases:
       1:
         name: "First Blueprint"
@@ -84,7 +91,7 @@ achievements:
     name: "Round Survivor"
     description:
       - "Survive rounds in Speed Builders."
-    icon: SHIELD
+    icon: "SHIELD"
     phases:
       1:
         name: "Still Standing"
@@ -156,7 +163,7 @@ achievements:
     name: "Perfect Replica"
     description:
       - "Complete perfect builds."
-    icon: GOLDEN_APPLE
+    icon: "GOLDEN_APPLE"
     phases:
       1:
         name: "Exact Copy"
@@ -228,7 +235,7 @@ achievements:
     name: "Winner Path"
     description:
       - "Win Speed Builders matches."
-    icon: DIAMOND
+    icon: "DIAMOND"
     phases:
       1:
         name: "First Victory"
@@ -300,7 +307,7 @@ achievements:
     name: "Complete Builder"
     description:
       - "Master every core Speed Builders skill."
-    icon: NETHER_STAR
+    icon: "NETHER_STAR"
     phases:
       1:
         name: "Balanced Start"

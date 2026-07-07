@@ -36,6 +36,11 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import net.blueva.arcade.api.setup.ModuleSetupCommand;
+import net.blueva.arcade.api.setup.ModuleSetupMetadata;
+import net.blueva.arcade.api.setup.ModuleSetupStep;
+import net.blueva.arcade.api.setup.ModuleSetupStatusCheck;
+import java.util.List;
 
 public class SpeedBuildersModule implements GameModule<Player, Location, World, Material, ItemStack, Sound, Block, Entity, Listener, EventPriority> {
 
@@ -43,6 +48,7 @@ public class SpeedBuildersModule implements GameModule<Player, Location, World, 
     private CoreConfigAPI coreConfig;
     private ModuleInfo moduleInfo;
     private StatsAPI statsAPI;
+    private File dataFolder;
     private MenuAPI<Player, Material> menuAPI;
     private ItemAPI<Player, ItemStack, Material> itemAPI;
 
@@ -74,7 +80,7 @@ public class SpeedBuildersModule implements GameModule<Player, Location, World, 
             throw new IllegalStateException("BlueArcade3 plugin not available for SpeedBuilders module");
         }
 
-        File dataFolder = moduleConfig.getDataFolder();
+        dataFolder = moduleConfig.getDataFolder();
         game = new SpeedBuildersGame(moduleInfo, moduleConfig, coreConfig, statsAPI,
                 dataFolder, SpeedBuildersModule.class, ownerPlugin.getLogger(), ownerPlugin);
 
@@ -92,8 +98,8 @@ public class SpeedBuildersModule implements GameModule<Player, Location, World, 
             voteMenu.registerGame(
                     moduleInfo.getId(),
                     material,
-                    moduleConfig.getStringFrom("language.yml", "vote_menu.name"),
-                    moduleConfig.getStringListFrom("language.yml", "vote_menu.lore")
+                    moduleConfig.getTranslation(null, "vote_menu.name"),
+                    moduleConfig.getTranslationList(null, "vote_menu.lore")
             );
         }
     }
@@ -171,10 +177,9 @@ public class SpeedBuildersModule implements GameModule<Player, Location, World, 
     }
 
     private void registerConfigs() {
-        moduleConfig.register("language.yml", 1);
-        moduleConfig.register("settings.yml", 1);
-        moduleConfig.register("achievements.yml", 1);
-        moduleConfig.register("store.yml", 1);
+        moduleConfig.register("settings.yml");
+        moduleConfig.register("achievements.yml");
+        moduleConfig.register("store.yml");
     }
 
     private void registerStats() {
@@ -182,17 +187,17 @@ public class SpeedBuildersModule implements GameModule<Player, Location, World, 
             return;
         }
         statsAPI.registerModuleStat(moduleInfo.getId(),
-                new StatDefinition("wins", moduleConfig.getStringFrom("language.yml", "stats.labels.wins"),
-                        moduleConfig.getStringFrom("language.yml", "stats.descriptions.wins"), StatScope.MODULE));
+                new StatDefinition("wins", moduleConfig.getTranslation(null, "stats.labels.wins"),
+                        moduleConfig.getTranslation(null, "stats.descriptions.wins"), StatScope.MODULE));
         statsAPI.registerModuleStat(moduleInfo.getId(),
-                new StatDefinition("games_played", moduleConfig.getStringFrom("language.yml", "stats.labels.games_played"),
-                        moduleConfig.getStringFrom("language.yml", "stats.descriptions.games_played"), StatScope.MODULE));
+                new StatDefinition("games_played", moduleConfig.getTranslation(null, "stats.labels.games_played"),
+                        moduleConfig.getTranslation(null, "stats.descriptions.games_played"), StatScope.MODULE));
         statsAPI.registerModuleStat(moduleInfo.getId(),
-                new StatDefinition("rounds_survived", moduleConfig.getStringFrom("language.yml", "stats.labels.rounds_survived"),
-                        moduleConfig.getStringFrom("language.yml", "stats.descriptions.rounds_survived"), StatScope.MODULE));
+                new StatDefinition("rounds_survived", moduleConfig.getTranslation(null, "stats.labels.rounds_survived"),
+                        moduleConfig.getTranslation(null, "stats.descriptions.rounds_survived"), StatScope.MODULE));
         statsAPI.registerModuleStat(moduleInfo.getId(),
-                new StatDefinition("perfect_builds", moduleConfig.getStringFrom("language.yml", "stats.labels.perfect_builds"),
-                        moduleConfig.getStringFrom("language.yml", "stats.descriptions.perfect_builds"), StatScope.MODULE));
+                new StatDefinition("perfect_builds", moduleConfig.getTranslation(null, "stats.labels.perfect_builds"),
+                        moduleConfig.getTranslation(null, "stats.descriptions.perfect_builds"), StatScope.MODULE));
     }
 
     private void registerAchievements() {
@@ -201,4 +206,45 @@ public class SpeedBuildersModule implements GameModule<Player, Location, World, 
             achievementsAPI.registerModuleAchievements(moduleInfo.getId(), "achievements.yml");
         }
     }
+
+    @Override
+    public ModuleSetupMetadata getSetupMetadata() {
+        return new ModuleSetupMetadata() {
+
+            @Override
+            public List<ModuleSetupStep> getSetupSteps() {
+                return List.of(
+                        new ModuleSetupStep("build_area", true, "Configure Build Area", "Configure the module-specific build area setup data.", List.of("/baa game <arena> speed_builders build_area"), "build area region"),
+                        new ModuleSetupStep("plot", true, "Configure Plot", "Configure the module-specific plot setup data.", List.of("/baa game <arena> speed_builders plot"), "plot region and spawn"),
+                        new ModuleSetupStep("showcase", true, "Configure Showcase", "Configure the module-specific showcase setup data.", List.of("/baa game <arena> speed_builders showcase"), "showcase region and spawn"),
+                        new ModuleSetupStep("structure", true, "Configure Structure", "Configure the module-specific structure setup data.", List.of("/baa game <arena> speed_builders structure"), "saved structure")
+                );
+            }
+
+            @Override
+            public List<ModuleSetupCommand> getSetupCommands() {
+                return List.of(
+                        new ModuleSetupCommand("build_area", "/baa game <arena> speed_builders build_area", "Configure build area setup data.", true),
+                        new ModuleSetupCommand("plot", "/baa game <arena> speed_builders plot", "Configure plot setup data.", true),
+                        new ModuleSetupCommand("showcase", "/baa game <arena> speed_builders showcase", "Configure showcase setup data.", true),
+                        new ModuleSetupCommand("structure", "/baa game <arena> speed_builders structure", "Configure structure setup data.", true)
+                );
+            }
+
+            @Override
+            public List<ModuleSetupStatusCheck<?, ?, ?>> getStatusChecks() {
+                return List.of(
+                        new ModuleSetupStatusCheck<>("build_area", true, "Create at least one build area.", context -> context.getData().getInt("game.build_areas.total", 0) > 0),
+                        new ModuleSetupStatusCheck<>("plot", true, "Create at least one plot.", context -> context.getData().getInt("game.plots.total", 0) > 0 || context.getData().has("game.plot.bounds.min.x")),
+                        new ModuleSetupStatusCheck<>("showcase", true, "Set the showcase plot.", context -> context.getData().has("game.showcase_plot.bounds.min.x") && context.getData().has("game.showcase_plot.bounds.max.x")),
+                        new ModuleSetupStatusCheck<>("structure", true, "Save at least one structure.", context -> {
+                            File structuresFolder = dataFolder == null ? null : new File(dataFolder, "structures");
+                            String[] files = structuresFolder == null ? null : structuresFolder.list((dir, name) -> name.endsWith(".json"));
+                            return files != null && files.length > 0;
+                        })
+                );
+            }
+        };
+    }
+
 }

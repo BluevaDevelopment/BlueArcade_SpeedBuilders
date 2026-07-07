@@ -65,27 +65,27 @@ class SpeedBuildersJudgingService {
             state.addPerfectPlayer(player.getUniqueId());
             state.incrementPerfectBuilds(player.getUniqueId());
 
-            String title = moduleConfig.getStringFrom("language.yml", "titles.perfect.title");
-            String subtitle = moduleConfig.getStringFrom("language.yml", "titles.perfect.subtitle");
+            String title = moduleConfig.getTranslation(player, "titles.perfect.title");
+            String subtitle = moduleConfig.getTranslation(player, "titles.perfect.subtitle");
             if (title != null && subtitle != null) {
                 context.getTitlesAPI().sendRaw(player, title, subtitle, 0, 20, 10);
             }
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.5f);
 
-            String broadcast = moduleConfig.getStringFrom("language.yml", "messages.perfect_build.broadcast");
-            if (broadcast != null) {
-                for (Player p : context.getPlayers()) {
-                    if (p.isOnline()) {
+            for (Player p : context.getPlayers()) {
+                if (p.isOnline()) {
+                    String broadcast = moduleConfig.getTranslation(p, "messages.perfect_build.broadcast");
+                    if (broadcast != null) {
                         context.getMessagesAPI().sendRaw(p, broadcast.replace("{player}", player.getName()));
                     }
                 }
             }
 
             if (allAlivePlayersPerfect(context, state)) {
-                String allPerfect = moduleConfig.getStringFrom("language.yml", "messages.all_perfect.broadcast");
-                if (allPerfect != null) {
-                    for (Player p : context.getPlayers()) {
-                        if (p.isOnline()) {
+                for (Player p : context.getPlayers()) {
+                    if (p.isOnline()) {
+                        String allPerfect = moduleConfig.getTranslation(p, "messages.all_perfect.broadcast");
+                        if (allPerfect != null) {
                             context.getMessagesAPI().sendRaw(p, allPerfect);
                         }
                     }
@@ -190,11 +190,11 @@ class SpeedBuildersJudgingService {
     private void eliminatePlayer(GameContext<Player, Location, World, Material, ItemStack, Sound, Block, Entity> context,
                                  Player player, double score) {
         context.eliminatePlayer(player, "lowest_score");
-        player.setGameMode(GameMode.SPECTATOR);
+        context.setPlayerSpectating(player, true);
         player.getInventory().clear();
 
-        String title = moduleConfig.getStringFrom("language.yml", "titles.elimination.title");
-        String subtitle = moduleConfig.getStringFrom("language.yml", "titles.elimination.subtitle");
+        String title = moduleConfig.getTranslation(player, "titles.elimination.title");
+        String subtitle = moduleConfig.getTranslation(player, "titles.elimination.subtitle");
         if (title != null && subtitle != null) {
             context.getTitlesAPI().sendRaw(player,
                     title,
@@ -202,7 +202,7 @@ class SpeedBuildersJudgingService {
                     0, 30, 10);
         }
 
-        String broadcast = moduleConfig.getStringFrom("language.yml", "messages.elimination.broadcast");
+        String broadcast = moduleConfig.getTranslation(player, "messages.elimination.broadcast");
         if (broadcast != null) {
             for (Player p : context.getPlayers()) {
                 if (p.isOnline()) {
@@ -221,8 +221,8 @@ class SpeedBuildersJudgingService {
             context.setWinner(winner);
             for (Player p : context.getPlayers()) {
                 if (!p.isOnline()) continue;
-                String title = moduleConfig.getStringFrom("language.yml", "titles.winner.title");
-                String subtitle = moduleConfig.getStringFrom("language.yml", "titles.winner.subtitle");
+                String title = moduleConfig.getTranslation(p, "titles.winner.title");
+                String subtitle = moduleConfig.getTranslation(p, "titles.winner.subtitle");
                 if (title != null && subtitle != null) {
                     context.getTitlesAPI().sendRaw(p,
                             title,
@@ -230,10 +230,10 @@ class SpeedBuildersJudgingService {
                             0, 60, 20);
                 }
             }
-            String broadcast = moduleConfig.getStringFrom("language.yml", "messages.game_winner.broadcast");
-            if (broadcast != null) {
-                for (Player p : context.getPlayers()) {
-                    if (p.isOnline()) {
+            for (Player p : context.getPlayers()) {
+                if (p.isOnline()) {
+                    String broadcast = moduleConfig.getTranslation(p, "messages.game_winner.broadcast");
+                    if (broadcast != null) {
                         context.getMessagesAPI().sendRaw(p, broadcast.replace("{player}", winner.getName()));
                     }
                 }

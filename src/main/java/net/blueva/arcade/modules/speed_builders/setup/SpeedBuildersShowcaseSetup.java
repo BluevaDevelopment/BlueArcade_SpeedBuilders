@@ -22,7 +22,7 @@ class SpeedBuildersShowcaseSetup {
         if ("remove".equalsIgnoreCase(action)) {
             return handleShowcaseRemove(context);
         }
-        context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage("showcase.usage"));
+        context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage(context.getPlayer(), "showcase.usage"));
         return true;
     }
 
@@ -33,7 +33,7 @@ class SpeedBuildersShowcaseSetup {
         }
 
         if (!context.getSelection().hasCompleteSelection(player)) {
-            context.getMessagesAPI().sendRaw(player, getSetupMessage("showcase.set.must_use_stick"));
+            context.getMessagesAPI().sendRaw(player, getSetupMessage(context.getPlayer(), "showcase.set.must_use_stick"));
             return true;
         }
 
@@ -49,7 +49,7 @@ class SpeedBuildersShowcaseSetup {
         int height = maxY - minY + 1;
 
         if (height < 10) {
-            context.getMessagesAPI().sendRaw(player, getSetupMessage("showcase.set.too_shallow"));
+            context.getMessagesAPI().sendRaw(player, getSetupMessage(context.getPlayer(), "showcase.set.too_shallow"));
             return true;
         }
 
@@ -63,7 +63,7 @@ class SpeedBuildersShowcaseSetup {
         int z = Math.abs(maxZ - minZ) + 1;
         int blocks = x * y * z;
 
-        String msg = getSetupMessage("showcase.set.success")
+        String msg = getSetupMessage(context.getPlayer(), "showcase.set.success")
                 .replace("{blocks}", String.valueOf(blocks))
                 .replace("{x}", String.valueOf(x))
                 .replace("{y}", String.valueOf(y))
@@ -75,12 +75,12 @@ class SpeedBuildersShowcaseSetup {
     private boolean handleShowcaseRemove(SetupContext<Player, CommandSender, Location> context) {
         context.getData().remove("game.showcase_plot");
         context.getData().save();
-        context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage("showcase.remove.success"));
+        context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage(context.getPlayer(), "showcase.remove.success"));
         return true;
     }
 
-    private String getSetupMessage(String key) {
-        String message = moduleConfig.getStringFrom("language.yml", "setup_messages." + key);
+    private String getSetupMessage(Player player, String key) {
+        String message = moduleConfig.getTranslation(player, "setup_messages." + key);
         if (message == null) {
             return "";
         }

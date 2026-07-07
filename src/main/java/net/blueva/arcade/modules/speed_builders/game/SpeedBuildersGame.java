@@ -125,10 +125,10 @@ public class SpeedBuildersGame {
         for (Player player : context.getPlayers()) {
             if (!player.isOnline()) continue;
             context.getSoundsAPI().play(player, coreConfig.getSound("sounds.starting_game.countdown"));
-            String title = coreConfig.getLanguage("titles.starting_game.title")
+            String title = coreConfig.getLanguage(player, "titles.starting_game.title")
                     .replace("{game_display_name}", moduleInfo.getName())
                     .replace("{time}", String.valueOf(secondsLeft));
-            String subtitle = coreConfig.getLanguage("titles.starting_game.subtitle")
+            String subtitle = coreConfig.getLanguage(player, "titles.starting_game.subtitle")
                     .replace("{game_display_name}", moduleInfo.getName())
                     .replace("{time}", String.valueOf(secondsLeft));
             context.getTitlesAPI().sendRaw(player, title, subtitle, 0, 20, 5);
@@ -236,8 +236,8 @@ public class SpeedBuildersGame {
         String structureName = structure.getName() != null ? structure.getName() : "Unknown";
         for (Player player : context.getPlayers()) {
             if (!player.isOnline()) continue;
-            String title = moduleConfig.getStringFrom("language.yml", "titles.showcase.title");
-            String subtitle = moduleConfig.getStringFrom("language.yml", "titles.showcase.subtitle");
+            String title = moduleConfig.getTranslation(player, "titles.showcase.title");
+            String subtitle = moduleConfig.getTranslation(player, "titles.showcase.subtitle");
             if (title != null && subtitle != null) {
                 context.getTitlesAPI().sendRaw(player,
                         title.replace("{structure}", structureName),
@@ -245,7 +245,7 @@ public class SpeedBuildersGame {
                         0, 40, 20);
             }
 
-            String broadcast = moduleConfig.getStringFrom("language.yml", "messages.showcase_started.broadcast");
+            String broadcast = moduleConfig.getTranslation(player, "messages.showcase_started.broadcast");
             if (broadcast != null) {
                 context.getMessagesAPI().sendRaw(player, broadcast.replace("{structure}", structureName));
             }
@@ -327,13 +327,13 @@ public class SpeedBuildersGame {
             itemService.giveStructureItems(player, structure);
             state.incrementRoundsSurvived(player.getUniqueId());
 
-            String title = moduleConfig.getStringFrom("language.yml", "titles.build_start.title");
-            String subtitle = moduleConfig.getStringFrom("language.yml", "titles.build_start.subtitle");
+            String title = moduleConfig.getTranslation(player, "titles.build_start.title");
+            String subtitle = moduleConfig.getTranslation(player, "titles.build_start.subtitle");
             if (title != null && subtitle != null) {
                 context.getTitlesAPI().sendRaw(player, title, subtitle, 0, 20, 10);
             }
 
-            String broadcast = moduleConfig.getStringFrom("language.yml", "messages.build_started.broadcast");
+            String broadcast = moduleConfig.getTranslation(player, "messages.build_started.broadcast");
             if (broadcast != null) {
                 context.getMessagesAPI().sendRaw(player, broadcast);
             }
@@ -426,12 +426,12 @@ public class SpeedBuildersGame {
             if (!player.isOnline()) continue;
             player.getInventory().clear();
             enableGameFlight(player);
-            String title = moduleConfig.getStringFrom("language.yml", "titles.judging.title");
-            String subtitle = moduleConfig.getStringFrom("language.yml", "titles.judging.subtitle");
+            String title = moduleConfig.getTranslation(player, "titles.judging.title");
+            String subtitle = moduleConfig.getTranslation(player, "titles.judging.subtitle");
             if (title != null && subtitle != null) {
                 context.getTitlesAPI().sendRaw(player, title, subtitle, 0, 30, 10);
             }
-            String broadcast = moduleConfig.getStringFrom("language.yml", "messages.judging_started.broadcast");
+            String broadcast = moduleConfig.getTranslation(player, "messages.judging_started.broadcast");
             if (broadcast != null) {
                 context.getMessagesAPI().sendRaw(player, broadcast);
             }
@@ -536,4 +536,10 @@ public class SpeedBuildersGame {
     public ModuleConfigAPI getModuleConfig() {
         return moduleConfig;
     }
+
+    private static String formatCountdownTime(int seconds) {
+        int safeSeconds = Math.max(0, seconds);
+        return String.format("%02d:%02d", safeSeconds / 60, safeSeconds % 60);
+    }
+
 }

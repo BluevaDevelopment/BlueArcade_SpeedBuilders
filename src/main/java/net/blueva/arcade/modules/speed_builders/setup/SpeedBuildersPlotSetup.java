@@ -37,7 +37,7 @@ class SpeedBuildersPlotSetup {
         if ("build_area".equalsIgnoreCase(action)) {
             return handlePlotBuildArea(context);
         }
-        context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage("plot.usage"));
+        context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage(context.getPlayer(), "plot.usage"));
         return true;
     }
 
@@ -52,7 +52,7 @@ class SpeedBuildersPlotSetup {
         if ("remove".equalsIgnoreCase(action)) {
             return handleBuildAreaRemove(context);
         }
-        context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage("build_area.usage"));
+        context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage(context.getPlayer(), "build_area.usage"));
         return true;
     }
 
@@ -64,7 +64,7 @@ class SpeedBuildersPlotSetup {
         }
 
         if (!context.getSelection().hasCompleteSelection(player)) {
-            context.getMessagesAPI().sendRaw(player, getSetupMessage("plot.add.must_use_stick"));
+            context.getMessagesAPI().sendRaw(player, getSetupMessage(context.getPlayer(), "plot.add.must_use_stick"));
             return true;
         }
 
@@ -93,7 +93,7 @@ class SpeedBuildersPlotSetup {
         int z = Math.abs(maxZ - minZ) + 1;
         int blocks = x * y * z;
 
-        String msg = getSetupMessage("plot.add.set")
+        String msg = getSetupMessage(context.getPlayer(), "plot.add.set")
                 .replace("{index}", String.valueOf(newPlotNumber))
                 .replace("{blocks}", String.valueOf(blocks))
                 .replace("{x}", String.valueOf(x))
@@ -101,7 +101,7 @@ class SpeedBuildersPlotSetup {
                 .replace("{z}", String.valueOf(z));
         context.getMessagesAPI().sendRaw(player, msg);
 
-        String spawnMsg = getSetupMessage("plot.add.spawn_set");
+        String spawnMsg = getSetupMessage(context.getPlayer(), "plot.add.spawn_set");
         if (spawnMsg != null && !spawnMsg.isEmpty()) {
             context.getMessagesAPI().sendRaw(player, spawnMsg.replace("{index}", String.valueOf(newPlotNumber)));
         }
@@ -111,7 +111,7 @@ class SpeedBuildersPlotSetup {
     private boolean handlePlotSet(SetupContext<Player, CommandSender, Location> context) {
         String idArg = context.getHandlerArg(1);
         if (idArg == null) {
-            context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage("plot.set.usage"));
+            context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage(context.getPlayer(), "plot.set.usage"));
             return true;
         }
 
@@ -126,7 +126,7 @@ class SpeedBuildersPlotSetup {
         }
 
         if (!context.getSelection().hasCompleteSelection(player)) {
-            context.getMessagesAPI().sendRaw(player, getSetupMessage("plot.add.must_use_stick"));
+            context.getMessagesAPI().sendRaw(player, getSetupMessage(context.getPlayer(), "plot.add.must_use_stick"));
             return true;
         }
 
@@ -151,7 +151,7 @@ class SpeedBuildersPlotSetup {
         int z = Math.abs(maxZ - minZ) + 1;
         int blocks = x * y * z;
 
-        String msg = getSetupMessage("plot.set.success")
+        String msg = getSetupMessage(context.getPlayer(), "plot.set.success")
                 .replace("{index}", String.valueOf(plotId))
                 .replace("{blocks}", String.valueOf(blocks))
                 .replace("{x}", String.valueOf(x))
@@ -164,7 +164,7 @@ class SpeedBuildersPlotSetup {
     private boolean handlePlotRemove(SetupContext<Player, CommandSender, Location> context) {
         String idArg = context.getHandlerArg(1);
         if (idArg == null) {
-            context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage("plot.remove.usage"));
+            context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage(context.getPlayer(), "plot.remove.usage"));
             return true;
         }
 
@@ -196,7 +196,7 @@ class SpeedBuildersPlotSetup {
         context.getData().setInt("game.plots.total", totalPlots - 1);
         context.getData().save();
 
-        String msg = getSetupMessage("plot.remove.success").replace("{index}", String.valueOf(plotId));
+        String msg = getSetupMessage(context.getPlayer(), "plot.remove.success").replace("{index}", String.valueOf(plotId));
         context.getMessagesAPI().sendRaw(context.getPlayer(), msg);
         return true;
     }
@@ -204,13 +204,13 @@ class SpeedBuildersPlotSetup {
     private boolean handlePlotSpawn(SetupContext<Player, CommandSender, Location> context) {
         String action = context.getHandlerArg(1);
         if (!"set".equalsIgnoreCase(action)) {
-            context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage("plot.spawn.usage"));
+            context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage(context.getPlayer(), "plot.spawn.usage"));
             return true;
         }
 
         String idArg = context.getHandlerArg(2);
         if (idArg == null) {
-            context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage("plot.spawn.usage"));
+            context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage(context.getPlayer(), "plot.spawn.usage"));
             return true;
         }
 
@@ -224,7 +224,7 @@ class SpeedBuildersPlotSetup {
         context.getData().setLocation(basePath + ".spawn", loc);
         context.getData().save();
 
-        String msg = getSetupMessage("plot.spawn.set").replace("{index}", String.valueOf(plotId));
+        String msg = getSetupMessage(context.getPlayer(), "plot.spawn.set").replace("{index}", String.valueOf(plotId));
         context.getMessagesAPI().sendRaw(context.getPlayer(), msg);
         return true;
     }
@@ -237,7 +237,7 @@ class SpeedBuildersPlotSetup {
 
         int totalPlots = context.getData().getInt("game.plots.total", 0);
         if (totalPlots == 0) {
-            context.getMessagesAPI().sendRaw(player, getSetupMessage("build_area.add.requires_plot_first"));
+            context.getMessagesAPI().sendRaw(player, getSetupMessage(context.getPlayer(), "build_area.add.requires_plot_first"));
             return true;
         }
 
@@ -249,7 +249,7 @@ class SpeedBuildersPlotSetup {
     private boolean handleBuildAreaSet(SetupContext<Player, CommandSender, Location> context) {
         String idArg = context.getHandlerArg(1);
         if (idArg == null) {
-            context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage("build_area.set.usage"));
+            context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage(context.getPlayer(), "build_area.set.usage"));
             return true;
         }
 
@@ -269,14 +269,14 @@ class SpeedBuildersPlotSetup {
     private boolean handlePlotBuildArea(SetupContext<Player, CommandSender, Location> context) {
         String action = context.getHandlerArg(1);
         if (action == null) {
-            context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage("plot.build_area.usage"));
+            context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage(context.getPlayer(), "plot.build_area.usage"));
             return true;
         }
 
         if ("set".equalsIgnoreCase(action) || "add".equalsIgnoreCase(action)) {
             String idArg = context.getHandlerArg(2);
             if (idArg == null) {
-                context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage("plot.build_area.usage"));
+                context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage(context.getPlayer(), "plot.build_area.usage"));
                 return true;
             }
 
@@ -296,7 +296,7 @@ class SpeedBuildersPlotSetup {
         if ("remove".equalsIgnoreCase(action)) {
             String idArg = context.getHandlerArg(2);
             if (idArg == null) {
-                context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage("plot.build_area.usage"));
+                context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage(context.getPlayer(), "plot.build_area.usage"));
                 return true;
             }
 
@@ -309,12 +309,12 @@ class SpeedBuildersPlotSetup {
             trimBuildAreaTotal(context);
             context.getData().save();
 
-            String msg = getSetupMessage("plot.build_area.remove").replace("{index}", String.valueOf(plotId));
+            String msg = getSetupMessage(context.getPlayer(), "plot.build_area.remove").replace("{index}", String.valueOf(plotId));
             context.getMessagesAPI().sendRaw(context.getPlayer(), msg);
             return true;
         }
 
-        context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage("plot.build_area.usage"));
+        context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage(context.getPlayer(), "plot.build_area.usage"));
         return true;
     }
 
@@ -325,7 +325,7 @@ class SpeedBuildersPlotSetup {
                                           boolean updateTotal,
                                           String successMessageKey) {
         if (!context.getSelection().hasCompleteSelection(player)) {
-            context.getMessagesAPI().sendRaw(player, getSetupMessage("build_area.add.must_use_stick"));
+            context.getMessagesAPI().sendRaw(player, getSetupMessage(context.getPlayer(), "build_area.add.must_use_stick"));
             return true;
         }
 
@@ -341,7 +341,7 @@ class SpeedBuildersPlotSetup {
         int height = maxY - minY + 1;
 
         if (height < 2) {
-            context.getMessagesAPI().sendRaw(player, getSetupMessage("build_area.add.too_shallow"));
+            context.getMessagesAPI().sendRaw(player, getSetupMessage(context.getPlayer(), "build_area.add.too_shallow"));
             return true;
         }
 
@@ -352,18 +352,18 @@ class SpeedBuildersPlotSetup {
 
         int floorLayers = countFloorLayers(world, minX, maxX, minY, maxY, minZ, maxZ);
         if (floorLayers == 0) {
-            context.getMessagesAPI().sendRaw(player, getSetupMessage("build_area.add.no_floor"));
+            context.getMessagesAPI().sendRaw(player, getSetupMessage(context.getPlayer(), "build_area.add.no_floor"));
             return true;
         }
         if (floorLayers > 2) {
-            context.getMessagesAPI().sendRaw(player, getSetupMessage("build_area.add.too_many_floor_layers"));
+            context.getMessagesAPI().sendRaw(player, getSetupMessage(context.getPlayer(), "build_area.add.too_many_floor_layers"));
             return true;
         }
 
         Material floorMaterial = detectFloorMaterial(world, minX, maxX, minY, minZ, maxZ);
 
         if (!isBuildAreaInsidePlot(context, plotId, minX, maxX, minY, maxY, minZ, maxZ)) {
-            context.getMessagesAPI().sendRaw(player, getSetupMessage("build_area.add.outside_plot"));
+            context.getMessagesAPI().sendRaw(player, getSetupMessage(context.getPlayer(), "build_area.add.outside_plot"));
             return true;
         }
 
@@ -383,7 +383,7 @@ class SpeedBuildersPlotSetup {
         int z = Math.abs(maxZ - minZ) + 1;
         int blocks = x * y * z;
 
-        String msg = getSetupMessage(successMessageKey)
+        String msg = getSetupMessage(player, successMessageKey)
                 .replace("{index}", String.valueOf(areaId))
                 .replace("{blocks}", String.valueOf(blocks))
                 .replace("{x}", String.valueOf(x))
@@ -442,7 +442,7 @@ class SpeedBuildersPlotSetup {
     private boolean handleBuildAreaRemove(SetupContext<Player, CommandSender, Location> context) {
         String idArg = context.getHandlerArg(1);
         if (idArg == null) {
-            context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage("build_area.remove.usage"));
+            context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage(context.getPlayer(), "build_area.remove.usage"));
             return true;
         }
 
@@ -474,7 +474,7 @@ class SpeedBuildersPlotSetup {
         context.getData().setInt("game.build_areas.total", totalAreas - 1);
         context.getData().save();
 
-        String msg = getSetupMessage("build_area.remove.success").replace("{index}", String.valueOf(areaId));
+        String msg = getSetupMessage(context.getPlayer(), "build_area.remove.success").replace("{index}", String.valueOf(areaId));
         context.getMessagesAPI().sendRaw(context.getPlayer(), msg);
         return true;
     }
@@ -491,7 +491,7 @@ class SpeedBuildersPlotSetup {
             return;
         }
 
-        String warning = getSetupMessage("build_area.add.below_recommended_size")
+        String warning = getSetupMessage(context.getPlayer(), "build_area.add.below_recommended_size")
                 .replace("{x}", String.valueOf(width))
                 .replace("{y}", String.valueOf(height))
                 .replace("{z}", String.valueOf(length))
@@ -508,12 +508,12 @@ class SpeedBuildersPlotSetup {
             int plotId = Integer.parseInt(idArg);
             int totalPlots = context.getData().getInt("game.plots.total", 0);
             if (plotId < 1 || plotId > totalPlots) {
-                context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage("plot.not_found"));
+                context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage(context.getPlayer(), "plot.not_found"));
                 return -1;
             }
             return plotId;
         } catch (NumberFormatException e) {
-            context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage("plot.invalid_id"));
+            context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage(context.getPlayer(), "plot.invalid_id"));
             return -1;
         }
     }
@@ -523,12 +523,12 @@ class SpeedBuildersPlotSetup {
             int areaId = Integer.parseInt(idArg);
             int totalAreas = context.getData().getInt("game.build_areas.total", 0);
             if (areaId < 1 || areaId > totalAreas) {
-                context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage("build_area.not_found"));
+                context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage(context.getPlayer(), "build_area.not_found"));
                 return -1;
             }
             return areaId;
         } catch (NumberFormatException e) {
-            context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage("build_area.invalid_id"));
+            context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage(context.getPlayer(), "build_area.invalid_id"));
             return -1;
         }
     }
@@ -567,8 +567,8 @@ class SpeedBuildersPlotSetup {
     }
 
 
-    private String getSetupMessage(String key) {
-        String message = moduleConfig.getStringFrom("language.yml", "setup_messages." + key);
+    private String getSetupMessage(Player player, String key) {
+        String message = moduleConfig.getTranslation(player, "setup_messages." + key);
         if (message == null) {
             return "";
         }

@@ -212,7 +212,7 @@ public class SpeedBuildersListener implements Listener {
     }
 
     private void sendCantBuildHere(Player player, GameContext<Player, Location, World, Material, ItemStack, Sound, Block, Entity> context) {
-        String msg = game.getModuleConfig().getStringFrom("language.yml", "messages.cant_build_here");
+        String msg = game.getModuleConfig().getTranslation(player, "messages.cant_build_here");
         if (msg != null) {
             context.getMessagesAPI().sendRaw(player, msg);
         }

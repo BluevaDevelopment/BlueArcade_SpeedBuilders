@@ -22,7 +22,7 @@ class SpeedBuildersScoreboardService {
         Map<String, String> placeholders = new HashMap<>();
         placeholders.put("arena", String.valueOf(context.getArenaId()));
         placeholders.put("round", String.valueOf(state.getCurrentRound()));
-        placeholders.put("time", String.valueOf(state.getTimeLeft()));
+        placeholders.put("time", formatCountdownTime(state.getTimeLeft()));
 
         String phaseKey = switch (state.getPhase()) {
             case SHOWCASE -> "scoreboard.showcase";
@@ -44,7 +44,7 @@ class SpeedBuildersScoreboardService {
         Map<String, String> placeholders = new HashMap<>();
         if (state == null) return placeholders;
         placeholders.put("round", String.valueOf(state.getCurrentRound()));
-        placeholders.put("time", String.valueOf(state.getTimeLeft()));
+        placeholders.put("time", formatCountdownTime(state.getTimeLeft()));
         placeholders.put("percentage", formatPercentage(state.getLastScore(player.getUniqueId())));
         return placeholders;
     }
@@ -52,4 +52,10 @@ class SpeedBuildersScoreboardService {
     String formatPercentage(double percentage) {
         return String.format(Locale.US, "%.0f%%", percentage);
     }
+
+    private static String formatCountdownTime(int seconds) {
+        int safeSeconds = Math.max(0, seconds);
+        return String.format("%02d:%02d", safeSeconds / 60, safeSeconds % 60);
+    }
+
 }

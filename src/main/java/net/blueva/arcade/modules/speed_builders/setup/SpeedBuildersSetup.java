@@ -156,7 +156,7 @@ public class SpeedBuildersSetup implements GameSetupHandler {
         if ("list".equalsIgnoreCase(action)) {
             return handleStructureList(context);
         }
-        context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage("structure.usage"));
+        context.getMessagesAPI().sendRaw(context.getPlayer(), getSetupMessage(context.getPlayer(), "structure.usage"));
         return true;
     }
 
@@ -168,12 +168,12 @@ public class SpeedBuildersSetup implements GameSetupHandler {
 
         String idArg = context.getHandlerArg(1);
         if (idArg == null || idArg.isBlank()) {
-            context.getMessagesAPI().sendRaw(player, getSetupMessage("structure.create.usage"));
+            context.getMessagesAPI().sendRaw(player, getSetupMessage(context.getPlayer(), "structure.create.usage"));
             return true;
         }
 
         if (!context.getSelection().hasCompleteSelection(player)) {
-            context.getMessagesAPI().sendRaw(player, getSetupMessage("structure.create.must_use_stick"));
+            context.getMessagesAPI().sendRaw(player, getSetupMessage(context.getPlayer(), "structure.create.must_use_stick"));
             return true;
         }
 
@@ -230,7 +230,7 @@ public class SpeedBuildersSetup implements GameSetupHandler {
             return true;
         }
 
-        String msg = getSetupMessage("structure.create.saved")
+        String msg = getSetupMessage(context.getPlayer(), "structure.create.saved")
                 .replace("{id}", structure.getId())
                 .replace("{voxels}", String.valueOf(voxels.size()));
         context.getMessagesAPI().sendRaw(player, msg);
@@ -245,19 +245,19 @@ public class SpeedBuildersSetup implements GameSetupHandler {
 
         String idArg = context.getHandlerArg(1);
         if (idArg == null || idArg.isBlank()) {
-            context.getMessagesAPI().sendRaw(player, getSetupMessage("structure.remove.usage"));
+            context.getMessagesAPI().sendRaw(player, getSetupMessage(context.getPlayer(), "structure.remove.usage"));
             return true;
         }
 
         File moduleFolder = new File(dataFolder, "structures");
         File file = new File(moduleFolder, idArg.toLowerCase().replace(" ", "_") + ".json");
         if (!file.exists()) {
-            context.getMessagesAPI().sendRaw(player, getSetupMessage("structure.remove.not_found"));
+            context.getMessagesAPI().sendRaw(player, getSetupMessage(context.getPlayer(), "structure.remove.not_found"));
             return true;
         }
 
         if (file.delete()) {
-            String msg = getSetupMessage("structure.remove.success").replace("{id}", idArg);
+            String msg = getSetupMessage(context.getPlayer(), "structure.remove.success").replace("{id}", idArg);
             context.getMessagesAPI().sendRaw(player, msg);
         } else {
             context.getMessagesAPI().sendRaw(player, "<red>Failed to delete structure file.</red>");
@@ -274,11 +274,11 @@ public class SpeedBuildersSetup implements GameSetupHandler {
         File moduleFolder = new File(dataFolder, "structures");
         File[] files = moduleFolder.listFiles((dir, name) -> name.endsWith(".json"));
         if (files == null || files.length == 0) {
-            context.getMessagesAPI().sendRaw(player, getSetupMessage("structure.list.empty"));
+            context.getMessagesAPI().sendRaw(player, getSetupMessage(context.getPlayer(), "structure.list.empty"));
             return true;
         }
 
-        StringBuilder sb = new StringBuilder(getSetupMessage("structure.list.header"));
+        StringBuilder sb = new StringBuilder(getSetupMessage(context.getPlayer(), "structure.list.header"));
         for (File file : files) {
             String name = file.getName().replace(".json", "");
             sb.append("\n<gray>- </gray><yellow>").append(name).append("</yellow>");
@@ -287,8 +287,8 @@ public class SpeedBuildersSetup implements GameSetupHandler {
         return true;
     }
 
-    private String getSetupMessage(String key) {
-        String message = moduleConfig.getStringFrom("language.yml", "setup_messages." + key);
+    private String getSetupMessage(Player player, String key) {
+        String message = moduleConfig.getTranslation(player, "setup_messages." + key);
         if (message == null) {
             return "";
         }
