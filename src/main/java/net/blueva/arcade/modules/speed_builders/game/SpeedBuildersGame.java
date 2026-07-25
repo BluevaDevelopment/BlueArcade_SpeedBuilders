@@ -215,13 +215,11 @@ public class SpeedBuildersGame {
             Location buildOrigin = worldSupport.getBuildOrigin(state, player);
             BuildArea buildArea = state.getPlayerBuildArea(player.getUniqueId());
             if (buildOrigin != null) {
-                worldSupport.moveOutOfBuildAreaIfInside(context, state, player);
+                boolean strictRegion = moduleConfig.getBoolean("gameplay.strict_plot_region", false);
+                worldSupport.moveOutOfBuildAreaIfInside(context, state, player, strictRegion);
                 context.getSchedulerAPI().runAtLocation(buildOrigin, () -> {
                     worldSupport.resetBuildAreaDirect(buildArea);
-                    int placed = worldSupport.pasteStructure(buildOrigin, structure, worldSupport.getPlayerRotationSteps(state, player));
-                    logger.info("[SpeedBuilders] Pasted reference for " + player.getName()
-                            + " in arena " + context.getArenaId()
-                            + " at " + worldSupport.formatLocation(buildOrigin) + " with " + placed + " block(s).");
+                    worldSupport.pasteStructure(buildOrigin, structure, worldSupport.getPlayerRotationSteps(state, player));
                 });
             }
         }
@@ -407,9 +405,7 @@ public class SpeedBuildersGame {
             }
             context.getSchedulerAPI().runAtLocation(showcase.getSpawn(), () -> {
                 worldSupport.clearRegionAboveFloorDirect(showcase.getMin(), showcase.getMax());
-                int placed = worldSupport.pasteStructure(showcase.getSpawn(), structure, 0);
-                logger.info("[SpeedBuilders] Pasted showcase for arena " + context.getArenaId()
-                        + " at " + worldSupport.formatLocation(showcase.getSpawn()) + " with " + placed + " block(s).");
+                worldSupport.pasteStructure(showcase.getSpawn(), structure, 0);
             });
         } else {
             logger.warning("[SpeedBuilders] Could not paste showcase for arena " + context.getArenaId()

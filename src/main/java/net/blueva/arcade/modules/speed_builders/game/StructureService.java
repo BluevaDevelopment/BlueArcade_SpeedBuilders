@@ -162,16 +162,10 @@ public class StructureService {
 
 
     public void filterStructuresByMaxSize(int maxWidth, int maxHeight, int maxLength) {
-        int before = structures.size();
         structures.removeIf(s -> {
             int[] size = getStructureSize(s);
             return size[0] > maxWidth || size[1] > maxHeight || size[2] > maxLength;
         });
-        int removed = before - structures.size();
-        if (removed > 0) {
-            logger.info("[SpeedBuilders] Filtered " + removed + " structures that exceed max size "
-                    + maxWidth + "x" + maxHeight + "x" + maxLength);
-        }
         pickOrder.clear();
         pickIndex = 0;
         if (!structures.isEmpty()) {

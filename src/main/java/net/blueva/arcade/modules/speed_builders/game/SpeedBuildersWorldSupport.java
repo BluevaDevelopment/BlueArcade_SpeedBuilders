@@ -31,12 +31,19 @@ class SpeedBuildersWorldSupport {
 
     private void teleportToSafeBuildView(GameContext<Player, Location, World, Material, ItemStack, Sound, Block, Entity> context,
                                          ArenaState state,
-                                         Player player) {
+                                         Player player,
+                                         boolean strictRegion) {
         BuildArea area = state.getPlayerBuildArea(player.getUniqueId());
         if (area == null || area.getMin() == null || area.getMax() == null) {
             return;
         }
-        Location safe = findSafeViewLocation(area.getMin(), area.getMax());
+        BuildPlot plot = state.getPlayerPlot(player.getUniqueId());
+        Location safe = strictRegion && plot != null
+                ? findSafeViewLocationWithinBounds(area.getMin(), area.getMax(), plot.getMin(), plot.getMax())
+                : findSafeViewLocation(area.getMin(), area.getMax());
+        if (safe == null) {
+            return;
+        }
         context.getSchedulerAPI().runAtEntity(player, () -> {
             enableFlight(player, true);
             player.teleport(safe);
@@ -44,13 +51,14 @@ class SpeedBuildersWorldSupport {
     }
 
     void moveOutOfBuildAreaIfInside(GameContext<Player, Location, World, Material, ItemStack, Sound, Block, Entity> context,
-                                            ArenaState state,
-                                            Player player) {
+                                     ArenaState state,
+                                     Player player,
+                                     boolean strictRegion) {
         BuildArea area = state.getPlayerBuildArea(player.getUniqueId());
         if (area == null || !isInsideRegion(player.getLocation(), area.getMin(), area.getMax())) {
             return;
         }
-        teleportToSafeBuildView(context, state, player);
+        teleportToSafeBuildView(context, state, player, strictRegion);
     }
 
     void moveOutOfRegionIfInside(GameContext<Player, Location, World, Material, ItemStack, Sound, Block, Entity> context,
@@ -121,6 +129,82 @@ class SpeedBuildersWorldSupport {
         }
 
         return faceLocation(new Location(world, centerX, topY, centerZ), lookAt);
+    }
+
+    private Location findSafeViewLocationWithinBounds(Location min,
+                                                      Location max,
+                                                      Location boundsMin,
+                                                      Location boundsMax) {
+        if (min == null || max == null || boundsMin == null || boundsMax == null) {
+            return null;
+        }
+        World world = boundsMin.getWorld() != null ? boundsMin.getWorld() : boundsMax.getWorld();
+        if (world == null) {
+            return null;
+        }
+
+        int minX = Math.min(boundsMin.getBlockX(), boundsMax.getBlockX());
+        int maxX = Math.max(boundsMin.getBlockX(), boundsMax.getBlockX());
+        int minY = Math.max(world.getMinHeight(), Math.min(boundsMin.getBlockY(), boundsMax.getBlockY()));
+        int maxFeetY = Math.min(world.getMaxHeight() - 2,
+                Math.max(boundsMin.getBlockY(), boundsMax.getBlockY()) - 1);
+        int minZ = Math.min(boundsMin.getBlockZ(), boundsMax.getBlockZ());
+        int maxZ = Math.max(boundsMin.getBlockZ(), boundsMax.getBlockZ());
+        if (minY > maxFeetY) {
+            return null;
+        }
+
+        int regionMinX = Math.min(min.getBlockX(), max.getBlockX());
+        int regionMaxX = Math.max(min.getBlockX(), max.getBlockX());
+        int regionMinY = Math.min(min.getBlockY(), max.getBlockY());
+        int regionMaxY = Math.max(min.getBlockY(), max.getBlockY());
+        int regionMinZ = Math.min(min.getBlockZ(), max.getBlockZ());
+        int regionMaxZ = Math.max(min.getBlockZ(), max.getBlockZ());
+
+        double centerX = regionMinX + ((regionMaxX - regionMinX + 1) / 2.0);
+        double centerZ = regionMinZ + ((regionMaxZ - regionMinZ + 1) / 2.0);
+        double preferredY = Math.max(minY, Math.min(maxFeetY, regionMaxY + 3));
+        Location lookAt = new Location(world, centerX, regionMinY + 1.0, centerZ);
+        Location best = null;
+        double bestDistance = Double.MAX_VALUE;
+
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxFeetY; y++) {
+                for (int z = minZ; z <= maxZ; z++) {
+                    if (isInsideBlock(x, y, z, regionMinX, regionMaxX, regionMinY, regionMaxY, regionMinZ, regionMaxZ)
+                            || isInsideBlock(x, y + 1, z, regionMinX, regionMaxX, regionMinY, regionMaxY, regionMinZ, regionMaxZ)) {
+                        continue;
+                    }
+                    Location candidate = new Location(world, x + 0.5, y, z + 0.5);
+                    if (!isSafeForPlayer(candidate)) {
+                        continue;
+                    }
+                    double dx = candidate.getX() - centerX;
+                    double dy = candidate.getY() - preferredY;
+                    double dz = candidate.getZ() - centerZ;
+                    double distance = dx * dx + dy * dy + dz * dz;
+                    if (distance < bestDistance) {
+                        best = candidate;
+                        bestDistance = distance;
+                    }
+                }
+            }
+        }
+        return best == null ? null : faceLocation(best, lookAt);
+    }
+
+    private boolean isInsideBlock(int x,
+                                  int y,
+                                  int z,
+                                  int minX,
+                                  int maxX,
+                                  int minY,
+                                  int maxY,
+                                  int minZ,
+                                  int maxZ) {
+        return x >= minX && x <= maxX
+                && y >= minY && y <= maxY
+                && z >= minZ && z <= maxZ;
     }
 
     private Location firstSafeAtOrAbove(Location location) {
@@ -313,14 +397,6 @@ class SpeedBuildersWorldSupport {
                 world.getBlockAt(x, minY, z).setType(area.getFloorMaterial(), false);
             }
         }
-    }
-
-    String formatLocation(Location location) {
-        if (location == null) {
-            return "null";
-        }
-        String worldName = location.getWorld() != null ? location.getWorld().getName() : "null-world";
-        return worldName + " " + location.getBlockX() + "," + location.getBlockY() + "," + location.getBlockZ();
     }
 
     void removeStructureMobs(GameContext<Player, Location, World, Material, ItemStack, Sound, Block, Entity> context,

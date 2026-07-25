@@ -36,7 +36,7 @@ public class SpeedBuildersListener implements Listener {
         this.game = game;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         GameContext<Player, Location, World, Material, ItemStack, Sound, Block, Entity> context = game.getContext(player);
@@ -62,7 +62,7 @@ public class SpeedBuildersListener implements Listener {
             return;
         }
 
-        event.setCancelled(true);
+        event.setTo(event.getFrom());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
