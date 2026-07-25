@@ -278,7 +278,10 @@ public class SpeedBuildersListener implements Listener {
                 && !plot.getMin().getWorld().equals(location.getWorld())) {
             return false;
         }
-        int margin = Math.max(0, game.getModuleConfig().getInt("gameplay.plot_border_margin", 6));
+        boolean strictRegion = game.getModuleConfig().getBoolean("gameplay.strict_plot_region", false);
+        int margin = strictRegion
+                ? 0
+                : Math.max(0, game.getModuleConfig().getInt("gameplay.plot_border_margin", 6));
         int x = location.getBlockX();
         int z = location.getBlockZ();
         int minX = Math.min(plot.getMin().getBlockX(), plot.getMax().getBlockX()) - margin;

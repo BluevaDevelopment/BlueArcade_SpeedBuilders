@@ -21,7 +21,10 @@ time:
 
 # Gameplay behavior
 gameplay:
+  # When enabled, players cannot move beyond the exact horizontal bounds of their assigned plot.
+  strict_plot_region: false
   # Extra horizontal blocks players may move outside their assigned plot before the border stops them.
+  # This value is ignored when strict_plot_region is enabled.
   plot_border_margin: 6
 
 # Guardian showcase behavior
