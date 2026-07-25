@@ -58,7 +58,7 @@ public class SpeedBuildersListener implements Listener {
         }
 
         BuildPlot plot = state.getPlayerPlot(player.getUniqueId());
-        if (plot == null || isInsidePlotHorizontally(event.getTo(), plot)) {
+        if (plot == null || isInsidePlotRegion(event.getTo(), plot)) {
             return;
         }
 
@@ -270,7 +270,7 @@ public class SpeedBuildersListener implements Listener {
                 || state.getPhase() == net.blueva.arcade.modules.speed_builders.state.GamePhase.BUILDING;
     }
 
-    private boolean isInsidePlotHorizontally(Location location, BuildPlot plot) {
+    private boolean isInsidePlotRegion(Location location, BuildPlot plot) {
         if (location == null || plot == null || plot.getMin() == null || plot.getMax() == null) {
             return true;
         }
@@ -288,6 +288,15 @@ public class SpeedBuildersListener implements Listener {
         int maxX = Math.max(plot.getMin().getBlockX(), plot.getMax().getBlockX()) + margin;
         int minZ = Math.min(plot.getMin().getBlockZ(), plot.getMax().getBlockZ()) - margin;
         int maxZ = Math.max(plot.getMin().getBlockZ(), plot.getMax().getBlockZ()) + margin;
-        return x >= minX && x <= maxX && z >= minZ && z <= maxZ;
+        if (x < minX || x > maxX || z < minZ || z > maxZ) {
+            return false;
+        }
+        if (!strictRegion) {
+            return true;
+        }
+        int y = location.getBlockY();
+        int minY = Math.min(plot.getMin().getBlockY(), plot.getMax().getBlockY());
+        int maxY = Math.max(plot.getMin().getBlockY(), plot.getMax().getBlockY());
+        return y >= minY && y <= maxY;
     }
 }
