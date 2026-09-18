@@ -21,7 +21,7 @@ class SpeedBuildersItemService {
             if (voxel.dy == 0 || isUpperHalf(voxel.mat)) continue;
             Material mat = materialFromStructureMat(voxel.mat);
             if (mat != null && mat != Material.AIR) {
-                items.merge(mat, 1, Integer::sum);
+                items.merge(mat, BlockItemCount.of(voxel.mat), Integer::sum);
             }
             if (voxel.mat != null && voxel.mat.contains("waterlogged=true")) {
                 items.putIfAbsent(Material.WATER_BUCKET, 1);

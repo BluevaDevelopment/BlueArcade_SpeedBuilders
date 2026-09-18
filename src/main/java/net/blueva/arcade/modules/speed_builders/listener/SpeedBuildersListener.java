@@ -1,5 +1,7 @@
 package net.blueva.arcade.modules.speed_builders.listener;
 
+import net.blueva.arcade.modules.speed_builders.game.BlockItemCount;
+
 import net.blueva.arcade.api.game.GameContext;
 import net.blueva.arcade.api.game.GamePhase;
 import net.blueva.arcade.modules.speed_builders.game.SpeedBuildersGame;
@@ -223,11 +225,12 @@ public class SpeedBuildersListener implements Listener {
             return;
         }
         Material material = itemMaterialFor(block.getType());
+        int amount = BlockItemCount.of(block.getBlockData().getAsString());
         block.setType(Material.AIR, false);
         if (material == null || !material.isItem()) {
             return;
         }
-        Map<Integer, ItemStack> leftovers = player.getInventory().addItem(new ItemStack(material, 1));
+        Map<Integer, ItemStack> leftovers = player.getInventory().addItem(new ItemStack(material, amount));
         for (ItemStack leftover : leftovers.values()) {
             player.getWorld().dropItemNaturally(player.getLocation(), leftover);
         }
